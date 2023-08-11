@@ -12,7 +12,7 @@
 #' @returns a vector where each entry containing C/O or ATTN has been
 #' transformed into an NA
 
-naify_address <- \(x) {
+remove_attn <- \(x) {
   ifelse(
     word(x, 1) %>%
       str_remove("(:|;)") %>%

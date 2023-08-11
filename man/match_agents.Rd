@@ -11,10 +11,15 @@ match_agents(parcels, agents, address, city)
 
 \item{agents}{a table of registered agent addresses}
 
-\item{...}{columns from agents to find in the parcel owner addresses}
+\item{address}{the address column in agents}
+
+\item{city}{the city column in agents}
+}
+\value{
+parcels with a modified agent column
 }
 \description{
-takes output from \code{identify_parcels} and matches against
+Takes output from \code{identify_parcels} and matches against
 a table of registered agent addresses. If an owner address matches
 a registered agent address, return true
 }

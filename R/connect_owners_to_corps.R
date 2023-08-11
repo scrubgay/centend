@@ -10,8 +10,9 @@
 
 connect_owners_to_corps <- function(owner_names, filings, id, name) {
   filings <- filings %>%
-    select(corp_id = {{id}}, corp_name = {{name}})
-    group_by(str_extract(corp_name, "^.."))
+    select(corp_id = {{id}},
+           corp_name = {{name}}) %>%
+    group_by(str_extract(corp_name, "^...."))
 
   group_keys <- group_keys(filings) %>% .[[1]]
 
@@ -22,17 +23,18 @@ connect_owners_to_corps <- function(owner_names, filings, id, name) {
   owner_names <- unique(owner_names)
 
   xwalk <- map_dfr(owner_names, \(owner) {
-    first_two <- str_extract(owner, "^..")
-    filings_sub <- filings[[first_two]]
+    first_chars <- str_extract(owner, "^....")
+    if (!(first_chars %in% names(filings))) {return()}
+    filings_sub <- filings[[first_chars]]
 
     filings_sub <- filings_sub %>%
-      filter(stringi::stri_detect_fixed(owner, corp_name) |
-               stringi::stri_detect_fixed(corp_name, owner)) %>%
+      filter(str_detect(corp_name, paste0("^", owner))) %>%
       mutate(owner_name = owner) %>%
+      select(-matches("str_extrac")) %>%
       relocate(owner_name)
 
     return(filings_sub)
-  })
+  }, .progress = TRUE)
 
   return(xwalk)
 }

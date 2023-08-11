@@ -7,18 +7,17 @@
 #' @param parcel_id the column containing the parcel id
 #' @param parcel_year the column containing the parcel year
 #' @param owner_name the column containing the owner name
-#' @param owner_address the column containing the owner address. Should be a single column
-#' that corresponds to the irreducible owner address search string, e.g. a street
-#' address and city already combined
-#' based on hashing methods
+#' @param owner_address the column containing the owner street address
+#' @param owner_city the column containing the owner city
 #' @returns A data frame with unique identifiers
 
-identify_parcels <- function(parcels, parcel_id, parcel_year, owner_name, owner_address) {
+identify_parcels <- function(parcels, parcel_id, parcel_year, owner_name, owner_address, owner_city) {
   parcels <- parcels %>%
     select(parcel_id = {{parcel_id}},
            parcel_year = {{parcel_year}},
            owner_name = {{owner_name}},
-           owner_address = {{owner_address}})
+           owner_address = {{owner_address}},
+           owner_city = {{owner_city}})
 
   parcels <- parcels %>%
     rowwise() %>%
@@ -28,8 +27,10 @@ identify_parcels <- function(parcels, parcel_id, parcel_year, owner_name, owner_
       agent = FALSE
     ) %>%
     ungroup() %>%
+    tidyr::unite(owner_address_full, owner_address, owner_city, sep = ", ", na.rm = TRUE, remove = FALSE) %>%
     relocate(py_id, .before = parcel_id) %>%
-    relocate(owner_id, .after = owner_address)
+    relocate(owner_id, .before = owner_address) %>%
+    relocate(owner_address_full, .before = owner_address)
 
   return(parcels)
 }

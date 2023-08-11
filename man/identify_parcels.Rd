@@ -4,7 +4,14 @@
 \alias{identify_parcels}
 \title{Uniquely identify parcels and parcel owners}
 \usage{
-identify_parcels(parcels, parcel_id, parcel_year, owner_name, owner_address)
+identify_parcels(
+  parcels,
+  parcel_id,
+  parcel_year,
+  owner_name,
+  owner_address,
+  owner_city
+)
 }
 \arguments{
 \item{parcels}{a data frame}
@@ -15,10 +22,9 @@ identify_parcels(parcels, parcel_id, parcel_year, owner_name, owner_address)
 
 \item{owner_name}{the column containing the owner name}
 
-\item{owner_address}{the column containing the owner address. Should be a single column
-that corresponds to the irreducible owner address search string, e.g. a street
-address and city already combined
-based on hashing methods}
+\item{owner_address}{the column containing the owner street address}
+
+\item{owner_city}{the column containing the owner city}
 }
 \value{
 A data frame with unique identifiers

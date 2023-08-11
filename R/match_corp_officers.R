@@ -13,9 +13,13 @@ match_corp_officers <- function(corp_ids, officers, join_id, ...) {
     select(corp_id = {{join_id}},
            ...) %>%
     filter(corp_id %in% corp_ids) %>%
+    collect()
+
+  officers <- officers %>%
+    unite(off_id, ..., na.rm = TRUE, remove = FALSE) %>%
     rowwise() %>%
     mutate(
-      off_id = rlang::hash(c_across(...))
+      off_id = rlang::hash(off_id)
     ) %>%
     ungroup()
 
