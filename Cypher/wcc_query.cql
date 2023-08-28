@@ -1,0 +1,22 @@
+// create the graph projection
+//with "19" as vintage, "duval19" as graphName
+with "22" as vintage, "duval22" as graphName
+match
+(n:!Parcel where
+    (n.year = vintage or n.year is NULL) and
+    (n.agent = "FALSE" or n.agent is NULL))
+-[r where
+    vintage in r.years_valid or
+    r.years_valid is NULL]-
+(m:!Parcel where
+    (m.year = vintage or m.year is NULL) and
+    (m.agent = "FALSE" or m.agent is NULL))
+with gds.graph.project(graphName, n, m) as g
+return g.graphName as graph, g.nodeCount AS nodes, g.relationshipCount AS rels
+
+// then call wcc in stream mode
+
+call gds.wcc.stream("duval22")
+yield nodeId, componentId
+return gds.util.asNode(nodeId) as node, componentId
+ORDER BY componentId
