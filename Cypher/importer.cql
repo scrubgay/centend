@@ -21,7 +21,8 @@ call {
     set oa.address = r.owner_address
     set oa.city = r.owner_city
     set oa.agent = r.agent
-    merge (on:OwnerName {name: r.owner_name})
+    merge (on:OwnerName {name: r.owner_name_adj})
+    set on.name_unadj = r.owner_name
     set on.type = r.owner_type
     merge (o)-[HA:HAS_ADDRESS]->(oa)
     set HA.years_valid = case
