@@ -122,19 +122,19 @@ tag_owners <- function(owner_name) {
                  "BORROWER",
                  as_word = TRUE)
     ) ~ "Corporate",
-    # str_detect(owner_name,
-    #            regex_or(
-    #              "CHURCH",
-    #              "FELLOWSHIP",
-    #              "CHRIST ",
-    #              "METHODIST",
-    #              "BAPTIST",
-    #              "MINIST",
-    #              "FIRST ",
-    #              " HOLY",
-    #              "MISSIONARY",
-    #              as_word = FALSE)
-    # ) ~ "Corporate",
+    str_detect(owner_name,
+               regex_or(
+                 "CHURCH",
+                 "FELLOWSHIP",
+                 "CHRIST ",
+                 "METHODIST",
+                 "BAPTIST",
+                 "MINIST",
+                 "FIRST ",
+                 " HOLY",
+                 "MISSIONARY",
+                 as_word = FALSE)
+    ) ~ "Corporate",
     .default = "Other"
   )
 }
