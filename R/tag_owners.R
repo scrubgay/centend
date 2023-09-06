@@ -11,7 +11,7 @@ tag_owners <- function(owner_name) {
   owner_name <- str_to_upper(owner_name)
   case_when(
     is.na(owner_name) |
-      str_length(owner_name) <= 5 |
+      str_length(owner_name) <= 3 |
       str_detect(owner_name,
                  regex_or(
                    "CONFIDENTIAL",
@@ -38,6 +38,34 @@ tag_owners <- function(owner_name) {
     ) ~ "Trust custodian",
 
     str_detect(owner_name,
+               paste0(
+                 " ",
+                 regex_or(
+                   "LLC",
+                   "L L C",
+                   "LL$",
+                   "LP",
+                   "L P",
+                   "LLLP",
+                   "L L L P",
+                   "INC",
+                   "I N C",
+                   "L C",
+                   "LC",
+                   "LTD",
+                   "LIMITED",
+                   "PARTNERSHIP",
+                   chopper("CORPORATION", "CORP"),
+                   "CO$",
+                   "COMPAN(Y|IES)",
+                   "GROUP",
+                   chopper("ASSOCIATION", "ASSOC"),
+                   chopper("ASSOCIATES", "ASSOCIATE"),
+                   as_word = FALSE)
+               )
+    ) ~ "Corporate",
+
+    str_detect(owner_name,
                regex_or(
                  "IRA",
                  "401K",
@@ -59,32 +87,6 @@ tag_owners <- function(owner_name) {
 
     str_detect(owner_name, "\\d") ~ "Corporate",
     str_detect(owner_name, " (OF|AT|BY) ") ~ "Corporate",
-    str_detect(owner_name,
-               paste0(
-                 " ",
-                 regex_or(
-                   "LLC",
-                   "L L C",
-                   "LP",
-                   "L P",
-                   "LLLP",
-                   "L L L P",
-                   "INC",
-                   "I N C",
-                   "L C",
-                   "LC",
-                   "LTD",
-                   "LIMITED",
-                   "PARTNERSHIP",
-                   chopper("CORPORATION", "CORP"),
-                   "CO$",
-                   "COMPAN(Y|IES)",
-                   "GROUP",
-                   chopper("ASSOCIATION", "ASSOC"),
-                   chopper("ASSOCIATES", "ASSOCIATE"),
-                   as_word = FALSE)
-               )
-    ) ~ "Corporate",
     str_detect(owner_name,
                # paste0(
                #   " ",
