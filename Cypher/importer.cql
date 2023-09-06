@@ -13,9 +13,17 @@ call {
     merge (py:Property {id: r.py_id})
     set py.parcel_id = r.parcel_id
     set py.year = r.parcel_year
+    set py.homestead = r.homestead
+    set py.housing_type = r.housing_type
+    set py.year_built = r.year_built
+    set py.units = r.units
     merge (p:Parcel {id: r.parcel_id})
     merge (py)-[:HAS_PARCEL]->(p)
     merge (o:Owner {id: r.owner_id})
+    set o.address = r.owner_address
+    set o.city = r.owner_city
+    set o.name_unadj = r.owner_name
+    set o.name = r.owner_name_adj
     merge (o)-[:OWNS]-(py)
     merge (oa:OwnerAddress {address_full: r.owner_address_full})
     set oa.address = r.owner_address
@@ -37,6 +45,11 @@ call {
         else HN.years_valid
         end
 } in transactions;
+
+// find entities connected to trust custodians and disconnect them
+match (n:OwnerName where n.type = "Trust custodian")-[r:HAS_NAME|HAS_ADDRESS*1..10]-(o:Owner|OwnerName|OwnerAddress)
+set r.custodian = "TRUE"
+return count(r)
 
 // create constraints for sunbiz stuff
 create constraint corp_uniq for (c:Corp) require c.id is unique;
