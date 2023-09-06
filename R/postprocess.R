@@ -41,3 +41,17 @@ who_is <- function(records, componentId) {
   }) %>%
     `names<-`(labels)
 }
+
+#' @describeIn load_records Get corporate entities
+corporate_components <- function(records) {
+  records %>%
+    filter(labels == "OwnerName") %>%
+    group_by(componentId) %>%
+    mutate(corporate = any(owner_type == "Corporate")) %>%
+    distinct(componentId, corporate)
+}
+
+# NOOH is actually a little more difficult to translate, so we'll leave it be for now
+# it's a function of owner address, physical address, and corporate identity, as well as
+# crosswalks between physical cities and mailing cities, and homestead exemption too
+# but it also depends really heavily on the property being studied and all that.
