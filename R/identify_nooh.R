@@ -7,7 +7,7 @@
 
 identify_nooh <- function(data,
                           componentId,
-                          py_id, parcel_id
+                          py_id, parcel_id,
                           owner_address, owner_city, owner_state, owner_zip,
                           physical_address, physical_city, physical_zip,
                           homestead, n_units,
@@ -40,24 +40,9 @@ identify_nooh <- function(data,
   # the workflow
   data <- data %>%
     mutate(owner_address = str_remove_all({{owner_address}}, "[^0-9A-Z- /]"),
-           # nooh = case_when(
-           #   corporate == TRUE ~ TRUE,
-           #   !({{owner_state}} %in% .state_strings) ~ TRUE,
-           #   !({{owner_city}} %in% .city_strings) ~ TRUE, # to-do, what when owner_city is spelled differently? multi-county cases?
-           #   !str_detect({{owner_address}}, "BOX") & {{owner_zip}} != {{physical_zip}} ~ TRUE,
-           #   {{owner_address}} == {{physical_address}} |
-           #     stringi::stri_detect({{owner_address}}, fixed = {{physical_address}}) |
-           #     stringi::stri_detect({{physical_address}}, fixed = {{owner_address}}) ~ FALSE,
-           #   {{homestead}} == TRUE ~ FALSE,
-           #   stringi::stri_detect({{owner_address}}, regex = str_extract({{physical_address}], "^(\\d)+")) ~ FALSE, #matches string address
-           #   Property > 4 ~ TRUE, #to-do, property types for besides single-family
-           #   str_detect({{owner_address}}, "(PO |P O |PO)BOX") ~ NA,
-           #   stringdist::stringdist({{owner_address}}, {{physical_address}}) > 7 ~ TRUE,
-           #   search == TRUE ~ NA,
-           #   .default = NA
-           # ),
            nooh_type = case_when(
              corporate == TRUE ~ "NOOH;Corporate-owned",
+             {{n_units}} > 4 ~ "NOOH;Large multifamily",
              !({{owner_state}} %in% .state_strings) ~ "NOOH;Out-of-state",
              !({{owner_city}} %in% .city_strings) ~ "NOOH;Out-of-city", # to-do, what when owner_city is spelled differently? multi-county cases?
              !str_detect({{owner_address}}, "BOX") & {{owner_zip}} != {{physical_zip}} ~ "NOOH;Non-matching ZIP, not a PO Box",
@@ -71,8 +56,9 @@ identify_nooh <- function(data,
              stringdist::stringdist({{owner_address}}, {{physical_address}}) > 7 ~ "NOOH;Strings dissimilar",
              search == TRUE ~ "Unknown;Unable to determine",
              .default = "Unknown;Unable to determine, all other cases"
-           ),
-    )
+           )
+    ) %>%
+    select(-search)
 
   return(data)
 }
