@@ -3,21 +3,23 @@
 #' @details this function is designed on a one-to-one mapping from
 #' a parcel and a single owner. It should still provide similar results on
 #' one-to-many mappings but it is yet untested.
-#' @param parcels a data frame
-#' @param parcel_id the column containing the parcel id
-#' @param parcel_year the column containing the parcel year
-#' @param owner_name the column containing the owner name
-#' @param owner_address the column containing the owner street address
-#' @param owner_city the column containing the owner city
+#' @param parcels A data frame
+#' @param parcel_id The column containing the parcel id
+#' @param parcel_year The column containing the parcel year
+#' @param owner_name The column containing the owner name
+#' @param owner_address The column containing the owner street address
+#' @param owner_city The column containing the owner city
+#' @param ... Any other columns to include, can be renamed through this interface
 #' @returns A data frame with unique identifiers
 
-identify_parcels <- function(parcels, parcel_id, parcel_year, owner_name, owner_address, owner_city) {
+identify_parcels <- function(parcels, parcel_id, parcel_year, owner_name, owner_address, owner_city, ...) {
   parcels <- parcels %>%
     select(parcel_id = {{parcel_id}},
            parcel_year = {{parcel_year}},
            owner_name = {{owner_name}},
            owner_address = {{owner_address}},
-           owner_city = {{owner_city}}) %>%
+           owner_city = {{owner_city}},
+           ...) %>%
     mutate(owner_type = tag_owners(owner_name)) %>%
     mutate(owner_name_adj = ifelse(owner_type == "Other", paste(owner_name, str_extract(owner_address, "(?<=(^| ))[0-9]+(?= )")), owner_name))
 
