@@ -17,6 +17,7 @@ call {
     set py.housing_type = r.housing_type
     set py.year_built = r.year_built
     set py.units = r.units
+    set py.county = r.county
     merge (p:Parcel {id: r.parcel_id})
     merge (py)-[:HAS_PARCEL]->(p)
     merge (o:Owner {id: r.owner_id})
@@ -47,9 +48,14 @@ call {
 } in transactions;
 
 // find entities connected to trust custodians and disconnect them
-match (n:OwnerName where n.type = "Trust custodian")-[r:HAS_NAME|HAS_ADDRESS*1..10]-(o:Owner|OwnerName|OwnerAddress)
-set r.custodian = "TRUE"
-return count(r)
+match p = ((:OwnerName {type: "Trust custodian"})-[:HAS_NAME|HAS_ADDRESS*1..10]-(:Owner|OwnerName|OwnerAddress))
+unwind relationships(p) as r
+set r.poisoned = "TRUE";
+
+// find entities connected to hidden/unknown and disconnect them
+match p = ((:OwnerName {type: "Hidden or unknown"})-[:HAS_NAME|HAS_ADDRESS*1..10]-(:Owner|OwnerName|OwnerAddress))
+unwind relationships(p) as r
+set r.poisoned = "TRUE";
 
 // create constraints for sunbiz stuff
 create constraint corp_uniq for (c:Corp) require c.id is unique;
