@@ -50,7 +50,7 @@ identify_nooh <- function(data,
                stringi::stri_detect({{owner_address}}, fixed = {{physical_address}}) |
                stringi::stri_detect({{physical_address}}, fixed = {{owner_address}}) ~ "OOH;Similar addresses",
              {{homestead}} == TRUE ~ "OOH;Homestead status and not corporate",
-             stringi::stri_detect({{owner_address}}, regex = str_extract({{physical_address}], "^(\\d)+")) ~ "OOH;House numbers match", #matches string address
+             stringi::stri_detect({{owner_address}}, regex = str_extract({{physical_address}}, "^(\\d)+")) ~ "OOH;House numbers match", #matches string address
              Property > 4 ~ "NOOH;Multiple properties owned", #to-do, property types for besides single-family
              str_detect({{owner_address}}, "(PO |P O |PO)BOX") ~ "Unknown;PO Box, unable to determine",
              stringdist::stringdist({{owner_address}}, {{physical_address}}) > 7 ~ "NOOH;Strings dissimilar",
