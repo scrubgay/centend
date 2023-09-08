@@ -4,8 +4,16 @@
 #' Weakly-Connected-Components result from Neo4j. Really just some shortcuts.
 
 #' @describeIn load_records Load records
-load_records <- function(path) {
-  records <- jsonlite::fromJSON(path, flatten = TRUE)
+load_records <- function(path, .apoc = FALSE) {
+  if (.apoc) {
+    records <- jsonlite::stream_in(file(path)) %>%
+      jsonlite::flatten() %>%
+      as_tibble() %>%
+      select(-node.type, -node.id)
+  }
+  else {
+    records <- jsonlite::fromJSON(path, flatten = TRUE)
+  }
   records <- records %>%
     rename_with(~ str_remove(.x, "^node.") %>% str_remove("^properties.")) %>%
     mutate(labels = as.character(labels))
@@ -29,15 +37,14 @@ component_summary <- function(records) {
 }
 
 #' @describeIn load_records Get identities
-who_is <- function(records, componentId) {
-  labels <- unique(records$labels) %>%
-    .[. != "Owner"]
+who_is <- function(records, component) {
+  labels <- unique(records$labels)
 
   map(labels, \(label) {
     records %>%
-      filter(labels == label,
-             componentId == componentId) %>%
-      select(where(~ all(!is.na(.x))), -identity, -labels, -elementId, -componentId)
+      filter(componentId == component,
+             labels == label) %>%
+      select(where(~ all(!is.na(.x))), -labels, -componentId)
   }) %>%
     `names<-`(labels)
 }
@@ -47,7 +54,7 @@ corporate_components <- function(records) {
   records %>%
     filter(labels == "OwnerName") %>%
     group_by(componentId) %>%
-    mutate(corporate = any(owner_type == "Corporate")) %>%
+    mutate(corporate = any(type == "Corporate")) %>%
     distinct(componentId, corporate)
 }
 
