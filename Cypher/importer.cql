@@ -50,12 +50,12 @@ call {
 // find entities connected to trust custodians and disconnect them
 match p = ((:OwnerName {type: "Trust custodian"})-[:HAS_NAME|HAS_ADDRESS*1..10]-(:Owner|OwnerName|OwnerAddress))
 unwind relationships(p) as r
-set r.poisoned = "TRUE";
+set r.poisoned = "Trust custodian";
 
 // find entities connected to hidden/unknown and disconnect them
 match p = ((:OwnerName {type: "Hidden or unknown"})-[:HAS_NAME|HAS_ADDRESS*1..10]-(:Owner|OwnerName|OwnerAddress))
 unwind relationships(p) as r
-set r.poisoned = "TRUE";
+set r.poisoned = "Hidden or unknown";
 
 // create constraints for sunbiz stuff
 create constraint corp_uniq for (c:Corp) require c.id is unique;
