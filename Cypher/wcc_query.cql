@@ -1,14 +1,13 @@
 // create the graph projection
-//with "19" as vintage, "duval19" as graphName
-with "22" as vintage, "firstcoast22" as graphName
+with "22" as vintage, "dv22_fc" as graphName
 match
-(n:!Parcel where
+(n where
     (n.year = vintage or n.year is NULL) and
     (n.agent = "FALSE" or n.agent is NULL))
 -[r where
     (vintage in r.years_valid or r.years_valid is NULL) and
     (r.poisoned is NULL)]-
-(m:!Parcel where
+(m where
     (m.year = vintage or m.year is NULL) and
     (m.agent = "FALSE" or m.agent is NULL))
 with gds.graph.project(graphName, n, m) as g
@@ -17,6 +16,6 @@ return g.graphName as graph, g.nodeCount AS nodes, g.relationshipCount AS rels;
 // then call wcc in stream mode
 
 CALL apoc.export.json.query(
-    "call gds.wcc.stream('firstcoast22') yield nodeId, componentId return gds.util.asNode(nodeId) as node, componentId ORDER BY componentId;",
-    "firstcoast.json"
+    "call gds.wcc.stream('dv22_fc') yield nodeId, componentId return gds.util.asNode(nodeId) as node, componentId ORDER BY componentId;",
+    "dv22_fc.json"
 );
