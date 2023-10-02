@@ -25,14 +25,14 @@ load_records <- function(path, .apoc = FALSE) {
 tagged_properties <- function(records) {
   records %>%
     filter(labels == "Property") %>%
-    select(parcel_id, year, componentId)
+    select(where(~ any(!is.na(.x))), -labels)
 }
 
 #' @describeIn load_records Summarize results
 component_summary <- function(records) {
   records %>%
     count(componentId, labels) %>%
-    pivot_wider(names_from = labels, values_from = n) %>%
+    pivot_wider(names_from = labels, values_from = n, values_fill = 0) %>%
     filter(!is.na(Property))
 }
 
