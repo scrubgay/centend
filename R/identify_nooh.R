@@ -21,7 +21,10 @@ identify_nooh <- function(data,
   # create a regex that finds the components of the physical address in the owner address
   data <- data %>%
     rowwise() %>%
-    mutate(search = any(stringi::stri_detect(
+    mutate(search = ifelse(
+      is.na({{owner_address}})|is.na({{physical_address}}),
+      NA,
+      any(stringi::stri_detect(
       {{owner_address}},
       regex = paste0(
         "(^| )",
@@ -29,7 +32,7 @@ identify_nooh <- function(data,
           .[str_length(.) > 4],
         paste0("( |$)")
         )
-      ))) %>%
+      )))) %>%
     ungroup()
 
   # join the results from above
@@ -45,6 +48,7 @@ identify_nooh <- function(data,
              {{n_units}} > 4 ~ "NOOH;Large multifamily",
              !({{owner_state}} %in% .state_strings) ~ "NOOH;Out-of-state",
              !str_detect({{owner_address}}, "BOX") & {{owner_zip}} != {{physical_zip}} ~ "NOOH;Non-matching ZIP, not a PO Box",
+             is.na({{owner_address}}) | is.na({{physical_address}}) ~ "Unknown;Empty owner or physical address",
              {{owner_address}} == {{physical_address}} |
                stringi::stri_detect({{owner_address}}, fixed = {{physical_address}}) |
                stringi::stri_detect({{physical_address}}, fixed = {{owner_address}}) ~ "OOH;Similar addresses",
