@@ -4,23 +4,25 @@
 \alias{chopper}
 \title{Detectable regex substring expressions}
 \usage{
-chopper(full_string, min_string)
+chopper(str, start = 1, end = str_length(str))
 }
 \arguments{
-\item{full_string}{The entire string}
+\item{start}{What position in the string to start the minimum truncate. Defaults to 1}
 
-\item{min_string}{The minimum string from which to be expanded}
+\item{end}{What position in the string terminates the minimum truncate. Defaults to the end of the string}
+
+\item{full_string}{The entire string}
 }
 \value{
 a regex expression
 }
 \description{
 Creates a regex expression that detects a minimum truncated substring,
-and additional letters up to the full string.
+and additional letters up to the full string on either side.
 Useful for matching string columns where names might be truncated.
 }
 \examples{
 # example code
-chopper("Jacksonville", "Jacksonv")
-chopper("identifiable", "identifi")
+chopper("Jacksonville", start=3, end=6)
+chopper("identifiable", end=7)
 }

@@ -14,17 +14,19 @@ identify_parcels(
 )
 }
 \arguments{
-\item{parcels}{a data frame}
+\item{parcels}{A data frame}
 
-\item{parcel_id}{the column containing the parcel id}
+\item{parcel_id}{The column containing the parcel id}
 
-\item{parcel_year}{the column containing the parcel year}
+\item{parcel_year}{The column containing the parcel year}
 
-\item{owner_name}{the column containing the owner name}
+\item{owner_name}{The column containing the owner name}
 
-\item{owner_address}{the column containing the owner street address}
+\item{owner_address}{The column containing the owner street address}
 
-\item{owner_city}{the column containing the owner city}
+\item{owner_city}{The column containing the owner city}
+
+\item{...}{Any other columns to include, can be renamed through this interface}
 }
 \value{
 A data frame with unique identifiers

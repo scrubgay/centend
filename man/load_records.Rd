@@ -4,17 +4,23 @@
 \alias{load_records}
 \alias{tagged_properties}
 \alias{component_summary}
+\alias{who_is}
+\alias{corporate_components}
 \title{Postprocessing functions}
 \usage{
-load_records(path)
+load_records(path, .apoc = FALSE)
 
 tagged_properties(records)
 
 component_summary(records)
+
+who_is(records, component)
+
+corporate_components(records)
 }
 \description{
 These are functions to operate on a json export result of a
-Weakly-Connected-Components result from Neo4j. Really just some shortcuts
+Weakly-Connected-Components result from Neo4j. Really just some shortcuts.
 }
 \section{Functions}{
 \itemize{
@@ -23,5 +29,9 @@ Weakly-Connected-Components result from Neo4j. Really just some shortcuts
 \item \code{tagged_properties()}: Tag properties
 
 \item \code{component_summary()}: Summarize results
+
+\item \code{who_is()}: Get identities
+
+\item \code{corporate_components()}: Get corporate entities
 
 }}

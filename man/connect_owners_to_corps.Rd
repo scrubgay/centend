@@ -4,10 +4,10 @@
 \alias{connect_owners_to_corps}
 \title{Match owner names to corporate filings}
 \usage{
-connect_owners_to_corps(owner_names, filings, id, name)
+connect_owners_to_corps(parcels, filings, id, name)
 }
 \arguments{
-\item{owner_names}{a vector of owner names}
+\item{parcels}{an identified parcel dataset with an owner_name_adj column}
 
 \item{filings}{a data frame consisting of corporate filings}
 

@@ -8,7 +8,7 @@ load_records <- function(path, .apoc = FALSE) {
   if (.apoc) {
     records <- jsonlite::stream_in(file(path)) %>%
       jsonlite::flatten() %>%
-      as_tibble() %>%
+      as.data.frame() %>%
       select(-node.type, -node.id)
   }
   else {
@@ -32,7 +32,7 @@ tagged_properties <- function(records) {
 component_summary <- function(records) {
   records %>%
     count(componentId, labels) %>%
-    pivot_wider(names_from = labels, values_from = n, values_fill = 0) %>%
+    tidyr::pivot_wider(names_from = labels, values_from = n, values_fill = 0) %>%
     filter(!is.na(Property))
 }
 
@@ -40,7 +40,7 @@ component_summary <- function(records) {
 who_is <- function(records, component) {
   labels <- unique(records$labels)
 
-  map(labels, \(label) {
+  lapply(labels, \(label) {
     records %>%
       filter(componentId == component,
              labels == label) %>%
@@ -58,7 +58,3 @@ corporate_components <- function(records) {
     distinct(componentId, corporate)
 }
 
-# NOOH is actually a little more difficult to translate, so we'll leave it be for now
-# it's a function of owner address, physical address, and corporate identity, as well as
-# crosswalks between physical cities and mailing cities, and homestead exemption too
-# but it also depends really heavily on the property being studied and all that.

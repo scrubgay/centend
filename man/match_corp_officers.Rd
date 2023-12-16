@@ -4,7 +4,7 @@
 \alias{match_corp_officers}
 \title{Find officers of corporations}
 \usage{
-match_corp_officers(corp_ids, officers, join_id, ...)
+match_corp_officers(corp_ids, officers, join_id)
 }
 \arguments{
 \item{corp_ids}{a vector of corporate ids,}
@@ -12,8 +12,6 @@ match_corp_officers(corp_ids, officers, join_id, ...)
 \item{officers}{a table of officers}
 
 \item{join_id}{a column in officers corresponding to corp_ids}
-
-\item{...}{columns on which an officer can be uniquely identified}
 }
 \value{
 a data frame with officers

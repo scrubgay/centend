@@ -12,31 +12,62 @@
 #' @param ... Any other columns to include, can be renamed through this interface
 #' @returns A data frame with unique identifiers
 
-identify_parcels <- function(parcels, parcel_id, parcel_year, owner_name, owner_address, owner_city, ...) {
+identify_parcels <- function(parcels, parcel_id, parcel_year, owner_name, owner_address, owner_city) {
   parcels <- parcels %>%
-    select(parcel_id = {{parcel_id}},
-           parcel_year = {{parcel_year}},
-           owner_name = {{owner_name}},
-           owner_address = {{owner_address}},
-           owner_city = {{owner_city}},
-           ...) %>%
-    mutate(owner_type = tag_owners(owner_name)) %>%
-    mutate(owner_name_adj = ifelse(owner_type == "Other", paste(owner_name, str_extract(owner_address, "(?<=(^| ))[0-9]+(?= )")), owner_name))
+    rename(
+      parcel_id = {{parcel_id}},
+      parcel_year = {{parcel_year}},
+      owner_name = {{owner_name}},
+      owner_address = {{owner_address}},
+      owner_city = {{owner_city}}) %>%
+    mutate(
+      owner_name = ifelse(is.na(owner_name) | owner_name == "", NA, owner_name),
+      owner_type = tag_owners(owner_name),
+      # "jose gonzalez problem"
+      owner_name_adj = ifelse(owner_type == "Other", paste(owner_name, str_extract(owner_address, "(?<=(^| ))[0-9]+(?= )")), owner_name))
 
   parcels <- parcels %>%
-    rowwise() %>%
-    mutate(
-      py_id = rlang::hash(c(parcel_id, parcel_year)),
-      owner_id = rlang::hash(c(owner_name_adj, owner_address)),
-      agent = FALSE
-    ) %>%
-    ungroup() %>%
-    tidyr::unite(owner_address_full, owner_address, owner_city, sep = ", ", na.rm = TRUE, remove = FALSE) %>%
-    relocate(py_id, .before = parcel_id) %>%
-    relocate(owner_id, .before = owner_address) %>%
-    relocate(owner_address_full, .before = owner_address) %>%
+    # mutate(
+    #   owner_address_full = paste(
+    #     ifelse(is.na(owner_address), "", owner_address),
+    #     ifelse(is.na(owner_city), "", owner_city)
+    #   ) %>% str_squish()
+    # ) %>%
+    #relocate(owner_address_full, .before = owner_address) %>%
     relocate(owner_name_adj, .after = owner_name) %>%
     relocate(owner_type, .after = owner_name_adj)
 
   return(parcels)
 }
+
+#
+# identify_parcels <- function(parcels, parcel_id, parcel_year, owner_name, owner_address, owner_city, ...) {
+#   parcels <- parcels %>%
+#     select(parcel_id = {{parcel_id}},
+#            parcel_year = {{parcel_year}},
+#            owner_name = {{owner_name}},
+#            owner_address = {{owner_address}},
+#            owner_city = {{owner_city}},
+#            ...) %>%
+#     mutate(
+#       owner_name = ifelse(is.na(owner_name) | owner_name == "", NA, owner_name),
+#       owner_type = tag_owners(owner_name),
+#       owner_name_adj = ifelse(owner_type == "Other", paste(owner_name, str_extract(owner_address, "(?<=(^| ))[0-9]+(?= )")), owner_name))
+#
+#   parcels <- parcels %>%
+#     rowwise() %>%
+#     mutate(
+#       py_id = rlang::hash(c(parcel_id, parcel_year)),
+#       owner_id = rlang::hash(c(owner_name_adj, owner_address)),
+#       #agent = FALSE
+#     ) %>%
+#     ungroup() %>%
+#     tidyr::unite(owner_address_full, owner_address, owner_city, sep = ", ", na.rm = TRUE, remove = FALSE) %>%
+#     relocate(py_id, .before = parcel_id) %>%
+#     relocate(owner_id, .before = owner_address) %>%
+#     relocate(owner_address_full, .before = owner_address) %>%
+#     relocate(owner_name_adj, .after = owner_name) %>%
+#     relocate(owner_type, .after = owner_name_adj)
+#
+#   return(parcels)
+# }

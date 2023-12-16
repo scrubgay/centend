@@ -3,7 +3,7 @@ Title: Examine Property Ownership Over Time
 Version: 0.0.0.9000
 Authors@R: 
     person("Renz", "Torres", , "wr3ns@proton.me", role = c("aut", "cre"))
-Description: This package allows one to examine how properties might be connected across numerous owners, in particular anonymous LLC owners.
+Description: This library groups property owners by shared owner names and addresses, and business officers. It aims to create a total portfolio of properties for these grouped entities.
 License: GNU (see LICENSE)
 Suggests: 
     testthat (>= 3.0.0)
@@ -13,9 +13,11 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
     dplyr,
-    jsonlite,
-    purrr,
-    rlang,
     stringr,
-    tibble,
-    tidyr
+    tidyr,
+    jsonlite,
+    data.table,
+    stringdist
+Depends: 
+    R (>= 2.10)
+LazyData: true

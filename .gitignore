@@ -50,7 +50,6 @@ po/*~
 rsconnect/
 
 # here
-data/
 exports/
 .Rbuildignore
 processing/

@@ -7,7 +7,7 @@
 remove_attn(x)
 }
 \arguments{
-\item{address}{An address vector to be cleaned}
+\item{x}{An address vector to be cleaned}
 }
 \value{
 a vector where each entry containing C/O or ATTN has been

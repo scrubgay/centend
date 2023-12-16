@@ -8,7 +8,7 @@
 #'
 #' This is an optional function in the centend version of this script.
 #'
-#' @param address An address vector to be cleaned
+#' @param x An address vector to be cleaned
 #' @returns a vector where each entry containing C/O or ATTN has been
 #' transformed into an NA
 

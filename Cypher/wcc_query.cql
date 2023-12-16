@@ -1,5 +1,5 @@
 // create the graph projection
-with "22" as vintage, "firstcoast22" as graphName
+with "23" as vintage, "tampa" as graphName
 match
 (n:!Parcel where
     (n.year = vintage or n.year is NULL) and
@@ -16,6 +16,6 @@ return g.graphName as graph, g.nodeCount AS nodes, g.relationshipCount AS rels;
 // then call wcc in stream mode
 
 CALL apoc.export.json.query(
-    "call gds.wcc.stream('firstcoast22') yield nodeId, componentId return gds.util.asNode(nodeId) as node, componentId ORDER BY componentId;",
-    "firstcoast22.json"
+    "call gds.wcc.stream('tampa') yield nodeId, componentId return gds.util.asNode(nodeId) as node, componentId ORDER BY componentId;",
+    "tampa.json"
 );

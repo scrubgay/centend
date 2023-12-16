@@ -1,7 +1,4 @@
 raw_to_shimberg <- function(raw, source = "raw") {
-  county_id_crosswalk <- read_csv("~/Projects/github/centend/data/county_codes_list.csv",
-                                  show_col_types = FALSE)
-
   if (source == "raw") {
     raw <- raw %>% select(
       year = ASMNT_YR,
@@ -29,7 +26,6 @@ raw_to_shimberg <- function(raw, source = "raw") {
     ) %>%
       mutate(
         year = year - 2000,
-        county = county_name,
         owner_zip = as.character(owner_zip),
         across(c(dor_uc, pa_uc), as.integer)
       )
@@ -67,7 +63,8 @@ raw_to_shimberg <- function(raw, source = "raw") {
         across(c(dor_uc, pa_uc), as.integer)
       )
   }
-  raw <- raw %>% left_join(county_id_crosswalk, join_by(county_id == id))
+  # presaved in the package
+  raw <- raw %>% left_join(county_codes, join_by(county_id == id))
 
   return(raw)
 }
