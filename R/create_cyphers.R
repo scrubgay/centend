@@ -4,6 +4,7 @@
 #'
 
 read_cypher <- function(path) {
+  system.file(path, package = "centend")
   file <- readLines(path)
   file <- Filter(\(str) !str_detect(str, "^//") & !(str_length(str) < 2), file)
   file <- paste0(file, collapse = "\n")
@@ -11,7 +12,7 @@ read_cypher <- function(path) {
 }
 
 cypher_import <- function(parcels_file = "parcels.csv", filings_file = "filings.csv", officers_file = "officers.csv", output_path = NULL) {
-  file <- read_cypher("./cypher_templates/importer.cql")
+  file <- read_cypher("./cypher/import.cql")
 
   query <- glue::glue(file, .open = "<<", .close = ">>")
 
@@ -21,7 +22,7 @@ cypher_import <- function(parcels_file = "parcels.csv", filings_file = "filings.
 }
 
 cypher_wcc <- function(years, output_prefix, output_path = NULL) {
-  file <- read_cypher("./cypher_templates/wcc.cql")
+  file <- read_cypher("./cypher/wcc.cql")
 
   queries <- lapply(years, \(year) {
     outputName = paste0(output_prefix, year)
