@@ -6,6 +6,8 @@ Authors@R:
 Description: This library groups property owners by shared owner names and addresses, and business officers. It aims to create a total portfolio of properties for these grouped entities.
 License: GNU (see LICENSE)
 Suggests: 
+    htmlwidgets,
+    networkD3,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
@@ -17,7 +19,8 @@ Imports:
     tidyr,
     jsonlite,
     data.table,
-    stringdist
+    stringdist,
+    glue
 Depends: 
     R (>= 2.10)
 LazyData: true
