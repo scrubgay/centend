@@ -1,6 +1,23 @@
-raw_to_shimberg <- function(raw, source = "raw") {
-  if (source == "raw") {
-    raw <- raw %>% select(
+#' Utility renaming functions
+#'
+#' This is a function that applies Shimberg Center business rules to
+#' column names of data from either the Florida Department of Revenue or
+#' Shimberg's preprocessing server. Not really meant for use in the real world.
+#'
+#' @param data Parcel or sales data.
+#' @param what One of `"parcels"` or `"sales"`.
+#' @param from One of `"fdor"` or `"ec2"`.
+#' @return The cleaned data source
+#' @export shimbergize
+
+shimbergize <- function(data, what, from) {
+  if (what == "parcels") {data = shimbergize_parcels(data, from)}
+  else if (what == "sales") {data = shimbergize_sales(data, from)}
+}
+
+shimbergize_parcels <- function(data, source) {
+  if (source == "fdor") {
+    data <- data %>% select(
       year = ASMNT_YR,
       county_id = CO_NO,
       parcel_id = PARCEL_ID,
@@ -30,7 +47,7 @@ raw_to_shimberg <- function(raw, source = "raw") {
         across(c(dor_uc, pa_uc), as.integer)
       )
   } else if (source == "ec2") {
-    raw <- raw %>% select(
+    data <- data %>% select(
       year,
       county_id = co_no,
       parcel,
@@ -64,7 +81,31 @@ raw_to_shimberg <- function(raw, source = "raw") {
       )
   }
   # presaved in the package
-  raw <- raw %>% left_join(county_codes, join_by(county_id == id))
+  data <- data %>% left_join(county_codes, join_by(county_id == id))
 
-  return(raw)
+  return(data)
+}
+
+shimbergize_sales <- function(data, source) {
+  if (source == "fdor") {
+    data <- data %>%
+      rename_with(~ str_to_lower(.x)) %>%
+      mutate(parcel = parcel_id %>% str_remove_all(" ")) %>%
+      select(
+        co_no,
+        parcel,
+        parcel_id,
+        sale = sale_prc,
+        year = sale_yr,
+        month = sale_mo,
+        trans = qual_cd,
+        improv = vi_cd,
+      )
+  }
+
+  data <- data %>%
+    mutate(co_no = as.integer(co_no)) %>%
+    left_join(county_codes, join_by(co_no == id))
+
+  return(data)
 }

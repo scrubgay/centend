@@ -4,6 +4,7 @@
 ## usethis namespace: start
 #' @import dplyr
 #' @importFrom stringr str_detect
+#' @importFrom stringr str_glue
 #' @importFrom stringr str_length
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_remove_all
